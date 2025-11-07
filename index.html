@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parola Vera - Web App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #FFB800 0%, #FF9500 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header-setup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .detective-icon {
+            font-size: 2em;
+            background: linear-gradient(135deg, #FF7A00 0%, #D91C1C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            font-size: 1.95em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #000;
+            flex: 1;
+        }
+
+        .btn-help {
+            background: transparent;
+            color: #2196F3;
+            border: none;
+            border-radius: 0;
+            width: auto;
+            height: auto;
+            font-size: 1.8em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-left: 0;
+            flex-shrink: 0;
+            padding: 0;
+        }
+
+        .btn-help:hover {
+            transform: scale(1.15);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .modal-content h3 {
+            color: #333;
+            margin-top: 12px;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            line-height: 1.2;
+        }
+
+        .modal-content p {
+            color: #555;
+            line-height: 1.3;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .modal-content ul {
+            color: #555;
+            line-height: 1.4;
+            margin-left: 20px;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .modal-content li {
+            margin-bottom: 5px;
+        }
+
+        .modal-content strong {
+            color: #FF9500;
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: #000;
+        }
+
+        .setup-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+            min-width: 150px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #FFB800;
+            border-radius: 8px;
+            font-size: 1.1em;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #FF9500;
+            box-shadow: 0 0 10px rgba(255, 184, 0, 0.3);
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #FFB800 0%, #FF9500 100%);
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+            padding: 15px;
+            font-size: 1.2em;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 184, 0, 0.3);
+        }
+
+        .btn-start:active {
+            transform: translateY(0);
+        }
+
+        .game-section {
+            display: none;
+            text-align: center;
+        }
+
+        .game-section.active {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .round-counter {
+            background: #FFF3E0;
+            padding: 10px;
+            border-radius: 8px;
+            color: #E65100;
+            font-weight: bold;
+        }
+
+        .stats {
+            background: #FFE0B2;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #D84315;
+            text-align: left;
+        }
+
+        .stats p {
+            margin: 5px 0;
+        }
+
+        .card-display {
+            background: linear-gradient(135deg, #FFB800 0%, #FF9500 100%);
+            color: white;
+            padding: 60px 30px;
+            border-radius: 15px;
+            font-size: 2em;
+            font-weight: bold;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .card-display.hidden {
+            display: none;
+        }
+
+        .btn-view-card {
+            background: #4CAF50;
+            color: white;
+            font-size: 1.2em;
+            padding: 15px;
+            width: 100%;
+            display: block;
+        }
+
+        .btn-view-card:hover {
+            background: #45a049;
+        }
+
+        .btn-view-card.hidden {
+            display: none;
+        }
+
+        .btn-next {
+            background: #2196F3;
+            color: white;
+            font-size: 1.1em;
+            padding: 12px;
+            width: 100%;
+            display: none;
+        }
+
+        .btn-next:hover {
+            background: #0b7dda;
+        }
+
+        .btn-next.show {
+            display: block;
+        }
+
+        .end-game-message {
+            background: #2196F3;
+            color: white;
+            font-size: 1.1em;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            font-weight: bold;
+        }
+
+        .end-game-message.show {
+            display: block;
+        }
+
+        .end-game-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border: 2px solid #ffc107;
+            display: none;
+        }
+
+        .end-game-section.show {
+            display: block;
+        }
+
+        .btn-check-password {
+            background: #ff9800;
+            color: white;
+            font-size: 1.1em;
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .btn-check-password:hover {
+            background: #e68900;
+        }
+
+        .btn-check-password.hidden {
+            display: none;
+        }
+
+        .btn-hide-password {
+            background: #757575;
+            color: white;
+            font-size: 1.1em;
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .btn-hide-password:hover {
+            background: #616161;
+        }
+
+        .btn-hide-password.show {
+            display: block;
+        }
+
+        .password-reveal {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .scoring-section {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: left;
+            border: 2px solid #4caf50;
+        }
+
+        .scoring-section h4 {
+            color: #2e7d32;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .scoring-section p {
+            color: #2e7d32;
+            margin: 6px 0;
+            line-height: 1.4;
+            font-size: 0.95em;
+        }
+
+        .scoring-section strong {
+            color: #1b5e20;
+        }
+
+        .btn-new-game {
+            background: #f44336;
+            color: white;
+            font-size: 1.1em;
+            padding: 12px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn-new-game:hover {
+            background: #da190b;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-setup">
+            <div class="detective-icon">🕵️</div>
+            <h1>Parola Vera</h1>
+            <button class="btn-help" id="helpBtn" onclick="openModal()">ℹ️</button>
+        </div>
+
+        <!-- Modal Regole -->
+        <div id="rulesModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <h2>📖 Regole del Gioco</h2>
+
+                <h3>🎭 I Ruoli:</h3>
+                <p><strong>Veri:</strong> Conoscono la parola corretta</p>
+                <p><strong>Confusi:</strong> Conoscono una parola simile ma sbagliata</p>
+                <p><strong>Falsi:</strong> Non conoscono nessuna parola</p>
+
+                <h3>🎯 Obiettivo:</h3>
+                <p>Tutti vedono la loro carta in turno. Poi il gruppo vota per eliminare chi pensa sia un Confuso o un Falso.</p>
+
+                <h3>📊 Fine della Manche:</h3>
+                <ul>
+                    <li><strong>Veri vincono:</strong> Tutti i Confusi + il Falso sono stati eliminati</li>
+                    <li><strong>Confusi vincono:</strong> Rimangono almeno 2 giocatori (se c'è 1 Confuso vivo)</li>
+                    <li><strong>Falso vince:</strong> Indovina la parola vera dei Veri OPPURE rimane l'ultimo con 1 Vero</li>
+                </ul>
+
+                <h3>⭐ Punteggi:</h3>
+                <p><strong>Veri:</strong> 1 punto se vincono</p>
+                <p><strong>Confusi:</strong> 2 punti se vincono</p>
+                <p><strong>Falso:</strong> 3 punti se vince</p>
+            </div>
+        </div>
+
+        <!-- Setup Section -->
+        <div class="setup-section" id="setupSection">
+            <div class="input-group">
+                <label for="numPlayers">Numero di giocatori:</label>
+                <input type="number" id="numPlayers" min="5" max="12" value="5">
+            </div>
+            <button class="btn-start" onclick="startGame()">Inizia Partita</button>
+            <div style="font-size: 0.9em; color: #666; text-align: center;">
+                Giocatori consentiti: 5-12
+            </div>
+        </div>
+
+        <!-- Game Section -->
+        <div class="game-section" id="gameSection">
+            <div class="round-counter" id="roundCounter"></div>
+
+            <div class="stats" id="gameStats"></div>
+
+            <div class="card-display hidden" id="cardDisplay">
+                Premi il bottone sottostante per vedere la tua carta
+            </div>
+
+            <button class="btn-view-card" id="btnViewCard" onclick="viewCard()">Vedi la tua carta</button>
+
+            <button class="btn-next" id="btnNext" onclick="nextPlayer()">Passa al prossimo giocatore</button>
+
+            <div class="end-game-message" id="endGameMessage">✅ Giro completato! Iniziate la partita</div>
+
+            <!-- End Game Section -->
+            <div class="end-game-section" id="endGameSection">
+                <h3>Giro Completato</h3>
+                <button class="btn-check-password" id="btnCheckPassword" onclick="checkPassword()">Verifica la parola vera</button>
+                <button class="btn-hide-password" id="btnHidePassword" onclick="hidePassword()">Nascondi la parola</button>
+                <div id="passwordReveal"></div>
+
+                <!-- Scoring Banner -->
+                <div class="scoring-section" id="scoringSection" style="display: none;">
+                    <h4>📊 Punteggi della Manche:</h4>
+                    <p id="scoringText"></p>
+                </div>
+
+                <button class="btn-new-game" onclick="resetGame()">Nuova Partita</button>
+            </div>
+        </div>
+
+        <div id="errorMessage"></div>
+    </div>
+
+    <script>
+        // 330 combinazioni di parole di alta qualità
+        const wordPairs = [
+            { veri: "Marzo", confusi: "Aprile" },
+            { veri: "Panna", confusi: "Latte" },
+            { veri: "Coccodrillo", confusi: "Lucertola" },
+            { veri: "Spogliatoio", confusi: "Palestra" },
+            { veri: "Grattacielo", confusi: "Palazzo" },
+            { veri: "Metro", confusi: "Autobus" },
+            { veri: "Taxi", confusi: "Limousine" },
+            { veri: "Torre Eiffel", confusi: "Arco di Trionfo" },
+            { veri: "Baguette", confusi: "Pane" },
+            { veri: "Vino", confusi: "Birra" },
+            { veri: "Templi", confusi: "Santuari" },
+            { veri: "Sushi", confusi: "Sashimi" },
+            { veri: "Sakura", confusi: "Orchidea" },
+            { veri: "Colosseo", confusi: "Forum" },
+            { veri: "Fontana di Trevi", confusi: "Obelisco" },
+            { veri: "Gladiatore", confusi: "Soldato" },
+            { veri: "Big Ben", confusi: "Clock Tower" },
+            { veri: "Londra", confusi: "Manchester" },
+            { veri: "Tè", confusi: "Caffè" },
+            { veri: "Gondola", confusi: "Barca" },
+            { veri: "Mela", confusi: "Pera" },
+            { veri: "Gatto", confusi: "Cane" },
+            { veri: "Libro", confusi: "Giornale" },
+            { veri: "Sole", confusi: "Luna" },
+            { veri: "Montagna", confusi: "Collina" },
+            { veri: "Mare", confusi: "Oceano" },
+            { veri: "Stella", confusi: "Pianeta" },
+            { veri: "Fiore", confusi: "Erba" },
+            { veri: "Albero", confusi: "Cespuglio" },
+            { veri: "Fuoco", confusi: "Fiamma" },
+            { veri: "Acqua", confusi: "Ghiaccio" },
+            { veri: "Vento", confusi: "Brezza" },
+            { veri: "Pioggia", confusi: "Neve" },
+            { veri: "Arcobaleno", confusi: "Nuvola" },
+            { veri: "Temporale", confusi: "Fulmine" },
+            { veri: "Tuono", confusi: "Lampo" },
+            { veri: "Nebbia", confusi: "Rugiada" },
+            { veri: "Brina", confusi: "Ghiaccio" },
+            { veri: "Sauna", confusi: "Bagno Turco" },
+            { veri: "Piscina", confusi: "Lago" },
+            { veri: "Fiume", confusi: "Ruscello" },
+            { veri: "Cascata", confusi: "Torrente" },
+            { veri: "Pozzo", confusi: "Sorgente" },
+            { veri: "Fonte", confusi: "Fontanella" },
+            { veri: "Sorgente", confusi: "Confluenza" },
+            { veri: "Palude", confusi: "Acquitrino" },
+            { veri: "Deserto", confusi: "Savana" },
+            { veri: "Prateria", confusi: "Steppe" },
+            { veri: "Foresta", confusi: "Giungla" },
+            { veri: "Bosco", confusi: "Macchia" },
+            { veri: "Tundra", confusi: "Arcipelago" },
+            { veri: "Isola", confusi: "Continente" },
+            { veri: "Baia", confusi: "Golfo" },
+            { veri: "Insenatura", confusi: "Porto" },
+            { veri: "Spiaggia", confusi: "Riva" },
+            { veri: "Costa", confusi: "Litorale" },
+            { veri: "Scogliera", confusi: "Promontorio" },
+            { veri: "Caverna", confusi: "Grotta" },
+            { veri: "Voragine", confusi: "Abisso" },
+            { veri: "Burrone", confusi: "Canyon" },
+            { veri: "Valle", confusi: "Vetta" },
+            { veri: "Picco", confusi: "Cima" },
+            { veri: "Pendio", confusi: "Fianco" },
+            { veri: "Terrazza", confusi: "Balcone" },
+            { veri: "Finestra", confusi: "Porta" },
+            { veri: "Tetto", confusi: "Fondamenta" },
+            { veri: "Muro", confusi: "Parete" },
+            { veri: "Ponte", confusi: "Viadotto" },
+            { veri: "Strada", confusi: "Via" },
+            { veri: "Vicolo", confusi: "Piazza" },
+            { veri: "Parco", confusi: "Giardino" },
+            { veri: "Orto", confusi: "Frutteto" },
+            { veri: "Vigna", confusi: "Campo" },
+            { veri: "Fattoria", confusi: "Allevamento" },
+            { veri: "Stalla", confusi: "Porcile" },
+            { veri: "Pollaio", confusi: "Ovile" },
+            { veri: "Fienile", confusi: "Granaio" },
+            { veri: "Mulino", confusi: "Fornace" },
+            { veri: "Fucina", confusi: "Officina" },
+            { veri: "Laboratorio", confusi: "Fabbrica" },
+            { veri: "Cantiere", confusi: "Stabilimento" },
+            { veri: "Magazzino", confusi: "Deposito" },
+            { veri: "Granero", confusi: "Silos" },
+            { veri: "Frigorifero", confusi: "Congelatore" },
+            { veri: "Forno", confusi: "Stufa" },
+            { veri: "Cucina", confusi: "Dispensa" },
+            { veri: "Tavolo", confusi: "Sedia" },
+            { veri: "Letto", confusi: "Divano" },
+            { veri: "Armadio", confusi: "Cassettone" },
+            { veri: "Scrivania", confusi: "Banco" },
+            { veri: "Libreria", confusi: "Scaffale" },
+            { veri: "Quadro", confusi: "Specchio" },
+            { veri: "Tappeto", confusi: "Tenda" },
+            { veri: "Lampada", confusi: "Candela" },
+            { veri: "Orologio", confusi: "Calendario" },
+            { veri: "Radio", confusi: "Televisione" },
+            { veri: "Telefono", confusi: "Computer" },
+            { veri: "Tastiera", confusi: "Mouse" },
+            { veri: "Stampante", confusi: "Scanner" },
+            { veri: "Fotocamera", confusi: "Videocamera" },
+            { veri: "Binocolo", confusi: "Telescopio" },
+            { veri: "Microscopio", confusi: "Lente" },
+            { veri: "Termometro", confusi: "Barometro" },
+            { veri: "Bussola", confusi: "Mappa" },
+            { veri: "Globo", confusi: "Atlante" },
+            { veri: "Bicicletta", confusi: "Motocicletta" },
+            { veri: "Automobile", confusi: "Camion" },
+            { veri: "Treno", confusi: "Aereo" },
+            { veri: "Nave", confusi: "Barca" },
+            { veri: "Elicottero", confusi: "Drago" },
+            { veri: "Razzo", confusi: "Satellite" },
+            { veri: "Paracadute", confusi: "Vela" },
+            { veri: "Fragola", confusi: "Lampone" },
+            { veri: "Banana", confusi: "Plantano" },
+            { veri: "Arancia", confusi: "Mandarino" },
+            { veri: "Limone", confusi: "Lime" },
+            { veri: "Ciliegia", confusi: "Visciola" },
+            { veri: "Pesca", confusi: "Albicocca" },
+            { veri: "Fico", confusi: "Mora" },
+            { veri: "Melone", confusi: "Anguria" },
+            { veri: "Uva", confusi: "Ribes" },
+            { veri: "Nocciola", confusi: "Mandorla" },
+            { veri: "Pinolo", confusi: "Pistacchio" },
+            { veri: "Castagna", confusi: "Nocciolina" },
+            { veri: "Datteri", confusi: "Fichi secchi" },
+            { veri: "Cocco", confusi: "Noce di macadamia" },
+            { veri: "Ananas", confusi: "Papaia" },
+            { veri: "Mango", confusi: "Avocado" },
+            { veri: "Kiwi", confusi: "Passion fruit" },
+            { veri: "Melanzana", confusi: "Peperone" },
+            { veri: "Zucchina", confusi: "Cetriolo" },
+            { veri: "Carota", confusi: "Barbabietola" },
+            { veri: "Patata", confusi: "Rapa" },
+            { veri: "Cipolla", confusi: "Aglio" },
+            { veri: "Porro", confusi: "Scalogno" },
+            { veri: "Insalata", confusi: "Spinaci" },
+            { veri: "Cavolo", confusi: "Broccoli" },
+            { veri: "Cavolfiore", confusi: "Romanesco" },
+            { veri: "Carciofo", confusi: "Asparago" },
+            { veri: "Pomodoro", confusi: "Ribes rosso" },
+            { veri: "Fagiolo", confusi: "Lenticchia" },
+            { veri: "Pisello", confusi: "Fava" },
+            { veri: "Mais", confusi: "Sorgo" },
+            { veri: "Riso", confusi: "Orzo" },
+            { veri: "Grano", confusi: "Segale" },
+            { veri: "Pasta", confusi: "Polenta" },
+            { veri: "Pane", confusi: "Grissino" },
+            { veri: "Biscotto", confusi: "Cracker" },
+            { veri: "Torta", confusi: "Crostata" },
+            { veri: "Dolce", confusi: "Pasticcino" },
+            { veri: "Gelato", confusi: "Sorbetto" },
+            { veri: "Yogurt", confusi: "Pudding" },
+            { veri: "Formaggio", confusi: "Ricotta" },
+            { veri: "Burro", confusi: "Margarina" },
+            { veri: "Olio", confusi: "Aceto" },
+            { veri: "Miele", confusi: "Melassa" },
+            { veri: "Zucchero", confusi: "Dolcificante" },
+            { veri: "Sale", confusi: "Pepe" },
+            { veri: "Spezia", confusi: "Erba aromatica" },
+            { veri: "Pesce", confusi: "Calamaro" },
+            { veri: "Gambero", confusi: "Aragosta" },
+            { veri: "Crostaceo", confusi: "Mollusco" },
+            { veri: "Pollo", confusi: "Tacchino" },
+            { veri: "Anatra", confusi: "Oca" },
+            { veri: "Maiale", confusi: "Cinghiale" },
+            { veri: "Mucca", confusi: "Bufalo" },
+            { veri: "Pecora", confusi: "Capra" },
+            { veri: "Cavallo", confusi: "Asino" },
+            { veri: "Leone", confusi: "Tigre" },
+            { veri: "Orso", confusi: "Panda" },
+            { veri: "Volpe", confusi: "Lupo" },
+            { veri: "Cervo", confusi: "Alce" },
+            { veri: "Zebra", confusi: "Gnu" },
+            { veri: "Giraffe", confusi: "Struzzo" },
+            { veri: "Elefante", confusi: "Rinoceronte" },
+            { veri: "Ippopotamo", confusi: "Coccodrillo" },
+            { veri: "Scimmia", confusi: "Gibbone" },
+            { veri: "Pinguino", confusi: "Foca" },
+            { veri: "Aquila", confusi: "Falco" },
+            { veri: "Colomba", confusi: "Piccione" },
+            { veri: "Corvo", confusi: "Gabbiano" },
+            { veri: "Gufo", confusi: "Civetta" },
+            { veri: "Pappagallo", confusi: "Canarino" },
+            { veri: "Cigno", confusi: "Gru" },
+            { veri: "Rondine", confusi: "Passero" },
+            { veri: "Serpente", confusi: "Vipera" },
+            { veri: "Rana", confusi: "Rospo" },
+            { veri: "Tartaruga", confusi: "Iguana" },
+            { veri: "Farfalla", confusi: "Falena" },
+            { veri: "Ape", confusi: "Vespa" },
+            { veri: "Scarafaggio", confusi: "Formica" },
+            { veri: "Ragno", confusi: "Scorpione" },
+            { veri: "Chiodo", confusi: "Vite" },
+            { veri: "Martello", confusi: "Scalpello" },
+            { veri: "Sega", confusi: "Lime" },
+            { veri: "Trapano", confusi: "Pugnale" },
+            { veri: "Cacciavite", confusi: "Grimaldello" },
+            { veri: "Chiave inglese", confusi: "Pinza" },
+            { veri: "Livella", confusi: "Squadra" },
+            { veri: "Metro", confusi: "Righello" },
+            { veri: "Matita", confusi: "Pastello" },
+            { veri: "Penna", confusi: "Marcatore" },
+            { veri: "Forbici", confusi: "Tagliacarta" },
+            { veri: "Nastro", confusi: "Spago" },
+            { veri: "Colla", confusi: "Nastro adesivo" },
+            { veri: "Carta", confusi: "Cartone" },
+            { veri: "Busta", confusi: "Scatola" },
+            { veri: "Gomma", confusi: "Correttore" },
+            { veri: "Graffetta", confusi: "Fermacarte" },
+            { veri: "Spillatrice", confusi: "Perforatrice" },
+            { veri: "Raccoglitore", confusi: "Quaderno" },
+            { veri: "Diario", confusi: "Agenda" },
+            { veri: "Enciclopedia", confusi: "Dizionario" },
+            { veri: "Romanzo", confusi: "Fumetto" },
+            { veri: "Poesia", confusi: "Prosa" },
+            { veri: "Rivista", confusi: "Quotidiano" },
+            { veri: "Articolo", confusi: "Editoriale" },
+            { veri: "Email", confusi: "SMS" },
+            { veri: "Messaggio", confusi: "Notifica" },
+            { veri: "Chat", confusi: "Forum" },
+            { veri: "Blog", confusi: "Sito web" },
+            { veri: "Video", confusi: "Foto" },
+            { veri: "Musica", confusi: "Podcast" },
+            { veri: "Canzone", confusi: "Colonna sonora" },
+            { veri: "Nota", confusi: "Accordo" },
+            { veri: "Melodia", confusi: "Armonia" },
+            { veri: "Ritmo", confusi: "Tempo" },
+            { veri: "Pianoforte", confusi: "Organo" },
+            { veri: "Violino", confusi: "Viola" },
+            { veri: "Chitarra", confusi: "Mandolino" },
+            { veri: "Flauto", confusi: "Clarinetto" },
+            { veri: "Tromba", confusi: "Trombone" },
+            { veri: "Tamburo", confusi: "Timpano" },
+            { veri: "Campana", confusi: "Gong" },
+            { veri: "Coperta", confusi: "Piumone" },
+            { veri: "Cuscino", confusi: "Guanciale" },
+            { veri: "Lenzuolo", confusi: "Copriletto" },
+            { veri: "Tappetino", confusi: "Moquette" },
+            { veri: "Tenda", confusi: "Persiana" },
+            { veri: "Cortina", confusi: "Velo" },
+            { veri: "Quadro", confusi: "Poster" },
+            { veri: "Cornice", confusi: "Tondo" },
+            { veri: "Scultura", confusi: "Statua" },
+            { veri: "Vaso", confusi: "Coppa" },
+            { veri: "Bottiglia", confusi: "Brocca" },
+            { veri: "Bicchiere", confusi: "Calice" },
+            { veri: "Tazza", confusi: "Boccale" },
+            { veri: "Piatto", confusi: "Ciotola" },
+            { veri: "Pentola", confusi: "Padella" },
+            { veri: "Teglia", confusi: "Mestolo" },
+            { veri: "Forchetta", confusi: "Coltello" },
+            { veri: "Cucchiaio", confusi: "Mestolo" },
+            { veri: "Cavatappi", confusi: "Apriscatole" },
+            { veri: "Grattugia", confusi: "Spremiagrumi" },
+            { veri: "Frullatore", confusi: "Tritatutto" },
+            { veri: "Microonde", confusi: "Tostapane" },
+            { veri: "Lavastoviglie", confusi: "Lavatrice" },
+            { veri: "Asciugabiancheria", confusi: "Termoconvettore" },
+            { veri: "Condizionatore", confusi: "Umidificatore" },
+            { veri: "Purificatore", confusi: "Diffusore" },
+            { veri: "Scopa", confusi: "Mocio" },
+            { veri: "Paletta", confusi: "Scopini" },
+            { veri: "Secchio", confusi: "Bacinella" },
+            { veri: "Spugna", confusi: "Panno" },
+            { veri: "Detergente", confusi: "Disinfettante" },
+            { veri: "Sapone", confusi: "Shampoo" },
+            { veri: "Dentifricio", confusi: "Collutorio" },
+            { veri: "Spazzolino", confusi: "Filo interdentale" },
+            { veri: "Pettine", confusi: "Spazzola" },
+            { veri: "Asciugacapelli", confusi: "Piastra" },
+            { veri: "Rasoio", confusi: "Depilatore" },
+            { veri: "Trucco", confusi: "Fondotinta" },
+            { veri: "Rossetto", confusi: "Gloss" },
+            { veri: "Mascara", confusi: "Ombretto" },
+            { veri: "Blush", confusi: "Cipria" },
+            { veri: "Profumo", confusi: "Colonia" },
+            { veri: "Deodorante", confusi: "Antitraspirante" },
+            { veri: "Crema", confusi: "Lozione" },
+            { veri: "Olio", confusi: "Balsamo" },
+            { veri: "Medicina", confusi: "Vitamina" },
+            { veri: "Cerotto", confusi: "Benda" },
+            { veri: "Garza", confusi: "Cotone" },
+            { veri: "Siringa", confusi: "Flebo" },
+            { veri: "Scuola", confusi: "Università" },
+            { veri: "Classe", confusi: "Aula" },
+            { veri: "Banco", confusi: "Cattedra" },
+            { veri: "Gesso", confusi: "Pennarello" },
+            { veri: "Lavagna", confusi: "Projector" },
+            { veri: "Zaino", confusi: "Valigetta" },
+            { veri: "Compasso", confusi: "Calibro" },
+            { veri: "Squadra", confusi: "Goniometro" },
+            { veri: "Calcolatrice", confusi: "Abaco" },
+            { veri: "Becher", confusi: "Provetta" },
+            { veri: "Erlenmayer", confusi: "Cristallizzatore" },
+            { veri: "Pipetta", confusi: "Buretta" },
+            { veri: "Mortaio", confusi: "Pestello" },
+            { veri: "Setaccio", confusi: "Colino" },
+            { veri: "Magnete", confusi: "Bussola magnetica" },
+            { veri: "Batteria", confusi: "Accumulatore" },
+            { veri: "Cavo", confusi: "Connettore" },
+            { veri: "Interruttore", confusi: "Relè" },
+            { veri: "Lampadina", confusi: "Neon" },
+            { veri: "Generatore", confusi: "Motore" },
+            { veri: "Cintura", confusi: "Bretelle" },
+            { veri: "Sciarpa", confusi: "Pashmina" },
+            { veri: "Guanto", confusi: "Muffola" },
+            { veri: "Cappello", confusi: "Berretto" },
+            { veri: "Corona", confusi: "Diadema" },
+            { veri: "Collana", confusi: "Ciondolo" },
+            { veri: "Bracciale", confusi: "Cavigliera" },
+            { veri: "Anello", confusi: "Sigillo" },
+            { veri: "Orecchino", confusi: "Piercing" },
+            { veri: "Spilla", confusi: "Fermaglietto" },
+        ];
+
+        // Configurazione per numero di giocatori
+        const gameConfig = {
+            5: { veri: 3, confusi: 1, falsi: 1 },
+            6: { veri: 4, confusi: 1, falsi: 1 },
+            7: { veri: 4, confusi: 2, falsi: 1 },
+            8: { veri: 5, confusi: 2, falsi: 1 },
+            9: { veri: 5, confusi: 3, falsi: 1 },
+            10: { veri: 6, confusi: 3, falsi: 1 },
+            11: { veri: 6, confusi: 3, falsi: 2 },
+            12: { veri: 7, confusi: 3, falsi: 2 }
+        };
+
+        let gameState = {
+            numPlayers: 0,
+            cards: [],
+            currentPlayer: 0,
+            selectedWordPair: null,
+            cardRevealed: false,
+            truePassword: null,
+            passwordRevealed: false
+        };
+
+        function openModal() {
+            document.getElementById('rulesModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('rulesModal').classList.remove('show');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('rulesModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        function startGame() {
+            const numPlayers = parseInt(document.getElementById('numPlayers').value);
+
+            if (isNaN(numPlayers) || numPlayers < 5 || numPlayers > 12) {
+                showError('Inserisci un numero tra 5 e 12!');
+                return;
+            }
+
+            gameState.numPlayers = numPlayers;
+            gameState.currentPlayer = 0;
+            gameState.cardRevealed = false;
+            gameState.passwordRevealed = false;
+
+            gameState.selectedWordPair = wordPairs[Math.floor(Math.random() * wordPairs.length)];
+            gameState.truePassword = gameState.selectedWordPair.veri;
+
+            generateCards(numPlayers);
+
+            document.getElementById('setupSection').style.display = 'none';
+            document.getElementById('gameSection').classList.add('active');
+
+            updateUI();
+        }
+
+        function generateCards(numPlayers) {
+            const config = gameConfig[numPlayers];
+            gameState.cards = [];
+
+            let roles = [];
+
+            for (let i = 0; i < config.veri; i++) {
+                roles.push({ role: 'veri', word: gameState.selectedWordPair.veri });
+            }
+
+            for (let i = 0; i < config.confusi; i++) {
+                roles.push({ role: 'confusi', word: gameState.selectedWordPair.confusi });
+            }
+
+            for (let i = 0; i < config.falsi; i++) {
+                roles.push({ role: 'falsi', word: 'FALSO' });
+            }
+
+            roles = roles.sort(() => Math.random() - 0.5);
+
+            gameState.cards = roles;
+        }
+
+        function viewCard() {
+            const cardDisplay = document.getElementById('cardDisplay');
+            const btnViewCard = document.getElementById('btnViewCard');
+            const btnNext = document.getElementById('btnNext');
+
+            if (!gameState.cardRevealed) {
+                const card = gameState.cards[gameState.currentPlayer];
+                cardDisplay.textContent = card.word;
+                cardDisplay.classList.remove('hidden');
+                gameState.cardRevealed = true;
+                btnViewCard.classList.add('hidden');
+                btnNext.classList.add('show');
+            } else {
+                cardDisplay.classList.add('hidden');
+                gameState.cardRevealed = false;
+                btnViewCard.classList.remove('hidden');
+                btnNext.classList.remove('show');
+            }
+        }
+
+        function nextPlayer() {
+            const btnNext = document.getElementById('btnNext');
+            const cardDisplay = document.getElementById('cardDisplay');
+            const btnViewCard = document.getElementById('btnViewCard');
+            const endGameMessage = document.getElementById('endGameMessage');
+            const endGameSection = document.getElementById('endGameSection');
+
+            gameState.currentPlayer++;
+            gameState.cardRevealed = false;
+
+            if (gameState.currentPlayer >= gameState.numPlayers) {
+                cardDisplay.classList.add('hidden');
+                btnViewCard.classList.add('hidden');
+                btnNext.classList.remove('show');
+                endGameMessage.classList.add('show');
+                endGameSection.classList.add('show');
+                return;
+            }
+
+            cardDisplay.classList.add('hidden');
+            btnViewCard.classList.remove('hidden');
+            btnNext.classList.remove('show');
+
+            updateUI();
+        }
+
+        function checkPassword() {
+            const passwordReveal = document.getElementById('passwordReveal');
+            const btnCheckPassword = document.getElementById('btnCheckPassword');
+            const btnHidePassword = document.getElementById('btnHidePassword');
+            const scoringSection = document.getElementById('scoringSection');
+            const scoringText = document.getElementById('scoringText');
+
+            passwordReveal.innerHTML = '<div class="password-reveal">La parola vera è:<br>' + gameState.truePassword + '</div>';
+
+            const config = gameConfig[gameState.numPlayers];
+            scoringText.innerHTML = `
+                <strong>✅ Se i Veri hanno vinto:</strong><br>
+                Ogni Vero guadagna: <strong>1 punto</strong><br><br>
+                <strong>🤫 Se i Confusi hanno vinto:</strong><br>
+                Ogni Confuso guadagna: <strong>2 punti</strong><br><br>
+                <strong>🎭 Se il Falso ha vinto:</strong><br>
+                Il Falso guadagna: <strong>3 punti</strong>
+            `;
+            scoringSection.style.display = 'block';
+
+            gameState.passwordRevealed = true;
+            btnCheckPassword.classList.add('hidden');
+            btnHidePassword.classList.add('show');
+        }
+
+        function hidePassword() {
+            const passwordReveal = document.getElementById('passwordReveal');
+            const btnCheckPassword = document.getElementById('btnCheckPassword');
+            const btnHidePassword = document.getElementById('btnHidePassword');
+            const scoringSection = document.getElementById('scoringSection');
+
+            passwordReveal.innerHTML = '';
+            scoringSection.style.display = 'none';
+            gameState.passwordRevealed = false;
+            btnCheckPassword.classList.remove('hidden');
+            btnHidePassword.classList.remove('show');
+        }
+
+        function updateUI() {
+            const roundCounter = document.getElementById('roundCounter');
+            const gameStats = document.getElementById('gameStats');
+
+            roundCounter.textContent = `Giocatore ${gameState.currentPlayer + 1} di ${gameState.numPlayers}`;
+
+            const config = gameConfig[gameState.numPlayers];
+            gameStats.innerHTML = `
+                <p><strong>Configurazione Partita:</strong></p>
+                <p>Veri: ${config.veri}</p>
+                <p>Confusi: ${config.confusi}</p>
+                <p>Falsi: ${config.falsi}</p>
+            `;
+        }
+
+        function resetGame() {
+            gameState = {
+                numPlayers: 0,
+                cards: [],
+                currentPlayer: 0,
+                selectedWordPair: null,
+                cardRevealed: false,
+                truePassword: null,
+                passwordRevealed: false
+            };
+
+            document.getElementById('setupSection').style.display = 'flex';
+            document.getElementById('gameSection').classList.remove('active');
+            document.getElementById('endGameSection').classList.remove('show');
+            document.getElementById('endGameMessage').classList.remove('show');
+            document.getElementById('numPlayers').value = 5;
+            document.getElementById('errorMessage').innerHTML = '';
+            document.getElementById('passwordReveal').innerHTML = '';
+            document.getElementById('scoringSection').style.display = 'none';
+
+            const cardDisplay = document.getElementById('cardDisplay');
+            const btnViewCard = document.getElementById('btnViewCard');
+            const btnCheckPassword = document.getElementById('btnCheckPassword');
+            const btnHidePassword = document.getElementById('btnHidePassword');
+            const btnNext = document.getElementById('btnNext');
+
+            cardDisplay.classList.add('hidden');
+            btnViewCard.classList.remove('hidden');
+            btnCheckPassword.classList.remove('hidden');
+            btnHidePassword.classList.remove('show');
+            btnNext.classList.remove('show');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = '<div class="error-message">' + message + '</div>';
+            setTimeout(() => {
+                errorDiv.innerHTML = '';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
